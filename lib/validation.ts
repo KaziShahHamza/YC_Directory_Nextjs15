@@ -17,5 +17,6 @@ export const formSchema = z.object({
         return false;
       }
     }),
+
   pitch: z.string().min(20).max(1000),
 });

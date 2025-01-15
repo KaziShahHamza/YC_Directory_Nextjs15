@@ -8,10 +8,14 @@ import { Button } from "./ui/button";
 import { Send } from "lucide-react";
 import { formSchema } from "@/lib/validation";
 import z from "zod";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 const StartupForm = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [pitch, setPitch] = useState("");
+  const { toast } = useToast();
+  const router = useRouter();
 
   const handleSubmit = async (prevState: any, formData: FormData) => {
     try {
@@ -30,13 +34,36 @@ const StartupForm = () => {
       // const result = await createIdea(prevState, formData, pitch);
 
       // console.log(result);
+
+    //   if (result.status == "SUCCESS") {
+    //     toast({
+    //       title: "Success",
+    //       description: "Your Idea's have been submitted successfully",
+    //     });
+
+    //     router.push(`/startup/${result.id}`);
+    //   }
+
+    //   return result;
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors = error.flatten().fieldErrors;
 
         setErrors(fieldErrors as unknown as Record<string, string>);
+
+        toast({
+          title: "Error",
+          description: "Check your inputs again",
+          variant: "destructive",
+        });
         return { ...prevState, error: "validation failed", status: "ERROR" };
       }
+
+      toast({
+        title: "Error",
+        description: "something went wrong",
+        variant: "destructive",
+      });
       return { ...prevState, error: "something went wrong", status: "ERROR" };
     }
   };
